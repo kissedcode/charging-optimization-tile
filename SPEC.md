@@ -1,7 +1,7 @@
 # Charging Optimization Tile: спецификация
 
 Версия документа: 2026-10-19.
-Статус: проект спецификации на подтверждение; приложение и облачная конфигурация ещё не созданы.
+Статус: утверждена пользователем 2026-10-19; идёт реализация и проверка.
 Текущая инсталляция: отсутствует; предполагаются `com.kissedcode.chargingtile`, Firebase project `charging-widget-kissed`, minSdk 35, targetSdk/compileSdk 36, Pixel 9 Pro.
 Назначение: показывать текущий режим оптимизации зарядки в панели быстрых настроек и переключать ограничение 80% одним нажатием.
 
@@ -253,7 +253,7 @@ Limit80 и Adaptive: `STATE_ACTIVE`; Off: `STATE_INACTIVE`. Unknown отобра
 
 #### Долгое нажатие
 
-Обработать QS_TILE_PREFERENCES в отдельной Activity. Конкретный прямой intent/component Charging optimization установить по проверке установленной прошивки; непроверенное имя компонента не считать подтверждённым.
+Обработать QS_TILE_PREFERENCES в отдельной Activity. Прямой action `com.google.android.settings.intelligence.action.CHARGING_OPTIMIZATION` разрешается во время выполнения только в экспортируемую системную Activity. Его наличие в Pixel-реализациях подтверждается [описанием Amply](https://github.com/d4rken-org/amply/issues/49); работа на конкретном телефоне пока не проверена.
 
 Далее fallback `Intent.ACTION_POWER_USAGE_SUMMARY`, затем `Settings.ACTION_SETTINGS`. Обрабатывать ActivityNotFoundException и SecurityException. До проверки на устройстве прямой переход имеет статус «не подтверждён».
 
@@ -277,7 +277,7 @@ Debug-keystore создаётся один раз для нового прило
 
 APK не должен иметь `testOnly=true`. Имя: `charging-optimization-tile-<versionName>-debug.apk`, где versionName в имени приводится к одному суффиксу, без `-debug-debug`.
 
-В репозитории хранятся базовые versionName и versionCode; каждое изменение для распространения увеличивает обе версии. Повторный запуск одной доставки повторно использует ту же версию и не выдаётся за новый релиз. R8 mapping сохраняется отдельно рядом с артефактом соответствующей сборки.
+В репозитории хранятся базовые versionName и versionCode; каждое изменение для распространения увеличивает обе версии. Повторный запуск уже распространённой версии отклоняется проверкой дубликатов. R8 mapping сохраняется отдельно рядом с артефактом соответствующей сборки.
 
 ### Детали: GitHub Actions
 
@@ -343,7 +343,7 @@ FIREBASE_TESTERS
 
 ### Детали: Acceptance checklist
 
-- [ ] Утверждена спецификация.
+- [x] Утверждена спецификация.
 - [ ] Новый репозиторий публичный; старый приватный репозиторий не изменён.
 - [ ] Lint и unit tests проходят; покрыты отсутствующие/нечисловые значения, все режимы, выбор следующего состояния, отказ/частичная запись.
 - [ ] Сборка internal действительно выполняет R8 и resource shrinking; mapping существует.
@@ -362,8 +362,8 @@ FIREBASE_TESTERS
 
 ### Детали: Known current deployment state
 
-- Репозиторий: ещё не создан.
-- Код: ещё не написан.
+- Репозиторий: `kissedcode/charging-optimization-tile`, public, ID `1426125944`.
+- Код: реализация в feature-ветке; сборка и CI ещё не подтверждены.
 - Версия: первый планируемый релиз `0.1.0-debug`, versionCode 1.
 - Firebase project: `charging-widget-kissed`, кандидат из существующей конфигурации.
 - Firebase App ID нового приложения: ещё не создан.
