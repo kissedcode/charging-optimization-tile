@@ -20,6 +20,27 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
+    signingConfigs {
+        getByName("debug") {
+            System.getenv("ANDROID_DEBUG_KEYSTORE_PATH")?.let { storeFile = file(it) }
+        }
+    }
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("internal") {
+            initWith(getByName("release"))
+            isDebuggable = false
+            signingConfig = signingConfigs.getByName("debug")
+            versionNameSuffix = "-debug"
+            matchingFallbacks += "release"
+        }
+    }
+    lint { warningsAsErrors = true }
+    testOptions { unitTests.isReturnDefaultValues = true }
 }
 
 dependencies {

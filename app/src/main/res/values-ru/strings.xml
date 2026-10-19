@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Charging Optimization Tile</string>
+    <string name="tile_label">Зарядка</string>
+    <string name="mode_limit">Лимит 80%</string>
+    <string name="mode_off">Выкл</string>
+    <string name="mode_adaptive">Адаптивная</string>
+    <string name="mode_unknown">Неизвестно</string>
+    <string name="loading">Проверка…</string>
+    <string name="intro">Простой переключатель для бережной зарядки.</string>
+    <string name="current_mode">Текущий режим</string>
+    <string name="tile_behavior">Нажатие переключает лимит 80% и выключенную оптимизацию.\nДолгое нажатие открывает системные настройки зарядки.</string>
+    <string name="permission_title">Разрешение на переключение</string>
+    <string name="permission_granted">Разрешение выдано</string>
+    <string name="permission_missing">Нужна разовая настройка через компьютер</string>
+    <string name="adb_instructions">Включите USB-отладку, подключите телефон к компьютеру с ADB, разрешите подключение на телефоне и выполните команду. После этого USB-отладку можно выключить.</string>
+    <string name="copy_command">Скопировать команду</string>
+    <string name="check_permission">Проверить разрешение</string>
+    <string name="add_tile">Добавить плитку</string>
+    <string name="open_settings">Открыть настройки зарядки</string>
+    <string name="privacy_note">Без сети, аналитики, аккаунтов и постоянных уведомлений. Для штатной прошивки Google Pixel; защитные функции телефона остаются включены.</string>
+    <string name="tile_added">Плитка добавлена</string>
+    <string name="tile_already_added">Плитка уже добавлена</string>
+    <string name="tile_not_added">Плитка не добавлена. Её можно добавить через редактор быстрых настроек.</string>
+    <string name="tile_add_failed">Не удалось показать предложение. Добавьте плитку через редактор быстрых настроек.</string>
+    <string name="error_permission">Нужно разрешение через компьютер. Инструкция показана ниже.</string>
+    <string name="error_unknown">Не удалось прочитать режим зарядки на этом устройстве.</string>
+    <string name="error_write">Не удалось переключить режим. Проверьте системные настройки.</string>
+    <string name="unsupported">Устройство или прошивка не поддерживается. Нужны штатные настройки зарядки Google Pixel.</string>
+    <string name="settings_fallback">Откройте «Оптимизация зарядки» в настройках батареи.</string>
+    <string name="settings_failed">Не удалось открыть системные настройки.</string>
+</resources>

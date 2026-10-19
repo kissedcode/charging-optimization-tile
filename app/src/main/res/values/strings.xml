@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Charging Optimization Tile</string>
+    <string name="tile_label">Charging</string>
+    <string name="mode_limit">80% limit</string>
+    <string name="mode_off">Off</string>
+    <string name="mode_adaptive">Adaptive</string>
+    <string name="mode_unknown">Unknown</string>
+    <string name="loading">Checking…</string>
+    <string name="intro">A small switch for a longer-lasting battery.</string>
+    <string name="current_mode">Current mode</string>
+    <string name="tile_behavior">Tap to switch between the 80% limit and Off.\nLong-press for system charging settings.</string>
+    <string name="permission_title">Switching permission</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="permission_missing">One-time setup from a computer is needed</string>
+    <string name="adb_instructions">Enable USB debugging, connect your phone to a computer with ADB, authorize the connection on the phone, then run this command. You can turn USB debugging off afterwards.</string>
+    <string name="adb_command" translatable="false">adb shell pm grant %1$s android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="copy_command">Copy command</string>
+    <string name="check_permission">Check permission</string>
+    <string name="add_tile">Add tile</string>
+    <string name="open_settings">Open charging settings</string>
+    <string name="privacy_note">Offline. No analytics, accounts, or background notification. For stock Google Pixel firmware; phone protection features remain enabled.</string>
+    <string name="tile_added">Tile added</string>
+    <string name="tile_already_added">Tile already added</string>
+    <string name="tile_not_added">Tile not added. You can add it in the Quick Settings editor.</string>
+    <string name="tile_add_failed">Could not show the prompt. Add the tile in the Quick Settings editor.</string>
+    <string name="error_permission">Permission from a computer is needed. Follow the instructions below.</string>
+    <string name="error_unknown">Could not read the charging mode on this device.</string>
+    <string name="error_write">Could not switch the mode. Check the system settings.</string>
+    <string name="unsupported">This device or firmware is not supported. Stock Google Pixel charging settings are required.</string>
+    <string name="settings_fallback">Open “Charging optimization” in the battery settings.</string>
+    <string name="settings_failed">Could not open system settings.</string>
+</resources>
