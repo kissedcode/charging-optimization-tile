@@ -40,6 +40,18 @@ class ChargingEngine(private val store: SettingsStore) {
         ChargingMode.UNKNOWN
     }
 
+    /**
+     * Why the current mode cannot be read, or null when both keys are readable.
+     * Android blocks hidden Settings.Secure keys for regular apps; test-only installs are exempt.
+     */
+    fun readError(): String? = try {
+        store.read(LIMIT_KEY)
+        store.read(ADAPTIVE_KEY)
+        null
+    } catch (e: RuntimeException) {
+        "${e.javaClass.simpleName}: ${e.message ?: "no details"}"
+    }
+
     fun toggle(hasPermission: Boolean, supported: Boolean): ToggleResult {
         val current = current()
         if (!supported) return ToggleResult.Failure(ToggleFailure.UNSUPPORTED, current)

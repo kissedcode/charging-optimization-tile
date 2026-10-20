@@ -50,13 +50,17 @@ Debug passwords are not production-strength key protection. Keep the keystore pr
 
 Increase both `versionCode` and `versionName` for each new delivery. Keep applicationId unchanged. APK filename example: `charging-optimization-tile-0.1.0-debug.apk`.
 
-The workflow checks R8 mapping, APK signature, and testOnly/debuggable flags, and rejects duplicate/older Firebase versionCodes. Rerunning an already distributed version fails the duplicate check rather than sending another notification.
+The workflow checks R8 mapping, APK signature, requires `testOnly=true` (hidden Settings.Secure keys are only readable by test-only apps) and forbids `debuggable`, and rejects duplicate/older Firebase versionCodes. Rerunning an already distributed version fails the duplicate check rather than sending another notification.
 
 Before the first upload, Firebase may return 404 for the release collection. Only versionCode 1 can bootstrap, and only after the Firebase Management API confirms an active Android registration with the exact App ID, project and APK package name. Other 404/403 errors remain failures.
 
 Artifacts contain the APK, R8 mapping and build metadata, never signing or Google credentials. A successful artifact upload followed by a Firebase error is a failed deployment.
 
 Firebase CLI's temporary binary-download URL is filtered out of public logs. Stable tester and Firebase console links remain visible; the shell retains `pipefail` so output filtering cannot hide a distribution failure.
+
+## GitHub Release
+
+Each delivery also creates a GitHub Release `v<versionName>` with the APK, R8 mapping and build metadata, because test-only APKs cannot be installed through the Firebase tester UI. Install with `adb install -t -r`.
 
 ## Current verified release
 

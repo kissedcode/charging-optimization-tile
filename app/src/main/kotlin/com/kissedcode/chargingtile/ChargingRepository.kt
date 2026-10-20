@@ -18,6 +18,7 @@ data class ChargingSnapshot(
     val mode: ChargingMode,
     val permission: Boolean,
     val supported: Boolean,
+    val readError: String? = null,
 )
 
 class ChargingRepository(private val context: Context) {
@@ -36,7 +37,7 @@ class ChargingRepository(private val context: Context) {
             Build.MODEL.startsWith("Pixel") && SettingsNavigator.hasChargingSettings(context)
 
     suspend fun snapshot(): ChargingSnapshot = withContext(Dispatchers.IO) {
-        mutex.withLock { ChargingSnapshot(engine.current(), hasPermission(), isSupported()) }
+        mutex.withLock { ChargingSnapshot(engine.current(), hasPermission(), isSupported(), engine.readError()) }
     }
 
     suspend fun toggle(): ToggleResult = withContext(Dispatchers.IO) {

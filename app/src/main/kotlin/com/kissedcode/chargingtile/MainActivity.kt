@@ -94,12 +94,34 @@ class MainActivity : ComponentActivity() {
                             Text(stringResource(R.string.unsupported), color = MaterialTheme.colorScheme.error)
                         }
                         message?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
+                        current?.readError?.let { detail ->
+                            Text(stringResource(R.string.read_blocked), color = MaterialTheme.colorScheme.error)
+                            Card(Modifier.fillMaxWidth()) {
+                                SelectionContainer {
+                                    Text(
+                                        detail,
+                                        Modifier.padding(16.dp),
+                                        style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                                    )
+                                }
+                            }
+                        }
                         Button(onClick = ::addTile, modifier = Modifier.fillMaxWidth()) {
                             Text(stringResource(R.string.add_tile))
                         }
                         HorizontalDivider()
                         Text(stringResource(R.string.permission_title), style = MaterialTheme.typography.titleLarge)
                         Text(stringResource(if (current?.permission == true) R.string.permission_granted else R.string.permission_missing))
+                        Text(stringResource(R.string.install_note), style = MaterialTheme.typography.bodySmall)
+                        Card(Modifier.fillMaxWidth()) {
+                            SelectionContainer {
+                                Text(
+                                    stringResource(R.string.install_command),
+                                    Modifier.padding(16.dp),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                                )
+                            }
+                        }
                         if (current?.permission != true) {
                             Text(stringResource(R.string.adb_instructions))
                             Card(Modifier.fillMaxWidth()) {
