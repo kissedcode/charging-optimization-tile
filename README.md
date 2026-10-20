@@ -11,11 +11,14 @@ Target device: Pixel 9 Pro on stock Android 15 or later. Other devices and ROMs 
 
 ## Install
 
-Install a distributed APK and grant the switching permission once:
+Android refuses to let regular apps read the hidden Pixel charging keys (`SettingsProvider.enforceSettingReadable`), so the APK is marked `testOnly` and must be installed from a computer. Download the APK from [GitHub Releases](https://github.com/kissedcode/charging-optimization-tile/releases), then:
 
 ```sh
-adb shell pm grant com.kissedcode.chargingtile android.permission.WRITE_SECURE_SETTINGS
+adb install -t -r charging-optimization-tile-<version>-debug.apk
+adb shell pm grant com.kissedcode.chargingtile android.permission.WRITE_SECURE_SETTINGS   # once
 ```
+
+The permission survives updates installed with the same signing key. Firebase App Distribution still notifies testers, but its in-app install does not work for test-only builds.
 
 Open the app and tap **Add tile**. Arrange it using Android's Quick Settings editor.
 

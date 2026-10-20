@@ -16,6 +16,9 @@
     <string name="adb_instructions">Enable USB debugging, connect your phone to a computer with ADB, authorize the connection on the phone, then run this command. You can turn USB debugging off afterwards.</string>
     <string name="adb_command" translatable="false">adb shell pm grant %1$s android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="copy_command">Copy command</string>
+    <string name="install_note">Android hides the charging settings from regular apps, so this build is marked test-only. Install and update it from a computer (the permission survives updates):</string>
+    <string name="install_command" translatable="false">adb install -t -r charging-optimization-tile-&lt;version&gt;-debug.apk</string>
+    <string name="read_blocked">The system refused to share the charging settings. Reinstall the app with “adb install -t -r”. Details:</string>
     <string name="check_permission">Check permission</string>
     <string name="add_tile">Add tile</string>
     <string name="open_settings">Open charging settings</string>

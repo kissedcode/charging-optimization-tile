@@ -26,7 +26,7 @@ jobs:
     environment: firebase-distribution
     timeout-minutes: 30
     permissions:
-      contents: read
+      contents: write
       id-token: write
     env:
       FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID }}
@@ -89,10 +89,15 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --verbose dist/*.apk
           "$BUILD_TOOLS/aapt" dump badging dist/*.apk
           "$BUILD_TOOLS/aapt" dump xmltree dist/*.apk AndroidManifest.xml > "$RUNNER_TEMP/manifest.txt"
-          if grep -E 'android:(testOnly|debuggable).*0xffffffff' "$RUNNER_TEMP/manifest.txt"; then
-            echo "::error::The distributed build must not be testOnly or debuggable"
+          if grep -E 'android:debuggable.*0xffffffff' "$RUNNER_TEMP/manifest.txt"; then
+            echo "::error::The distributed build must not be debuggable"
             exit 1
           fi
+          # Hidden Pixel charging keys are only readable by test-only apps (SettingsProvider.enforceSettingReadable).
+          grep -E 'android:testOnly.*0xffffffff' "$RUNNER_TEMP/manifest.txt" >/dev/null || {
+            echo "::error::The build must be testOnly=true, otherwise Android refuses to read the charging mode"
+            exit 1
+          }
           test -s dist/mapping.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -126,6 +131,15 @@ jobs:
             --testers "$FIREBASE_TESTERS" \
             --release-notes "80% / Off Quick Settings tile. Build $GITHUB_RUN_NUMBER, commit $GITHUB_SHA. Debug-signed and R8-optimized." \
             --non-interactive 2>&1 | sed -E '/Download the release binary|[?&]token=/d'
+      - name: Publish GitHub release for adb install
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./dist/build-metadata.json').versionName")"
+          gh release create "v$version" dist/*.apk dist/mapping.txt dist/build-metadata.json \
+            --target "$GITHUB_SHA" --title "Charging Optimization Tile $version" \
+            --notes "Test-only build: install with \`adb install -t -r <apk>\`. Build $GITHUB_RUN_NUMBER, commit $GITHUB_SHA."
       - name: Remove signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/charging-debug.keystore" firebase-debug.log
