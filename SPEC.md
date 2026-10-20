@@ -289,6 +289,7 @@ APK не должен иметь `testOnly=true`. Имя: `charging-optimization
 - **Зависимости:** actions фиксируются на проверенные commit SHA; Gradle wrapper с проверкой checksum; версии CLI и зависимостей фиксируются.
 - **Артефакты:** APK, R8 mapping, результаты тестов; никаких credentials, keystore, файлов auth и полных дампов переменных окружения.
 - **Сериализация:** доставки main выполняются последовательно; перед доставкой отсеивать устаревший commit и уже выпущенную версию. Не отменять выполняющуюся загрузку ради новой.
+- **Первый релиз:** 404 списка релизов допускается только для versionCode 1 и после проверки ACTIVE Android-регистрации с точным appId/projectId/packageName через Firebase Management API. Остальные 404/403 не игнорируются.
 - **Финальный статус:** различать успешную сборку и успешное распространение. Отсутствие OIDC-конфигурации не считается успешным деплоем.
 
 Предостережения об обработке недоверенного кода с секретами изложены в [GitHub Docs](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target).
@@ -367,7 +368,7 @@ FIREBASE_TESTERS
 - Версия: первый планируемый релиз `0.1.0-debug`, versionCode 1.
 - Firebase project: `charging-widget-kissed`, кандидат из существующей конфигурации.
 - Firebase App ID нового приложения: `1:460876191249:android:4a2bcc211ec8a3976843b0`.
-- OIDC / IAM: ещё не настроены.
+- OIDC / IAM: настроены; выделены pool `charging-tile-gh`, provider `github-main`, service account `charging-tile-distributor`. GitHub получил доступ к API Firebase без постоянного JSON-ключа; первая попытка остановлена обработкой отсутствующего списка релизов нового приложения.
 - Keystore: создан один постоянный debug-keystore; загружен в secret environment `firebase-distribution`.
 - Тестеры: два стандартных адреса владельца; будут заданы непублично.
 - APK / mapping: локально собраны для `0.1.0-debug`; доставка ожидает настройки OIDC.

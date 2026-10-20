@@ -51,6 +51,8 @@ Increase both `versionCode` and `versionName` for each new delivery. Keep applic
 
 The workflow checks R8 mapping, APK signature, and testOnly/debuggable flags, and rejects duplicate/older Firebase versionCodes. Rerunning an already distributed version fails the duplicate check rather than sending another notification.
 
+Before the first upload, Firebase may return 404 for the release collection. Only versionCode 1 can bootstrap, and only after the Firebase Management API confirms an active Android registration with the exact App ID, project and APK package name. Other 404/403 errors remain failures.
+
 Artifacts contain the APK, R8 mapping and build metadata, never signing or Google credentials. A successful artifact upload followed by a Firebase error is a failed deployment.
 
 ## Device acceptance
