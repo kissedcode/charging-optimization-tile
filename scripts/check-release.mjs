@@ -19,7 +19,22 @@ async function main() {
   let pageToken;
   do {
     const url = `https://firebaseappdistribution.googleapis.com/v1/projects/${projectNumber}/apps/${encodeURIComponent(appId)}/releases`;
-    const {data} = await client.request({url, params: {pageSize: 100, ...(pageToken ? {pageToken} : {})}});
+    let data;
+    try {
+      ({data} = await client.request({url, params: {pageSize: 100, ...(pageToken ? {pageToken} : {})}}));
+    } catch (error) {
+      // A registered Android app has no App Distribution resource until its first upload.
+      // Do not interpret arbitrary missing/inaccessible apps as an empty release history.
+      if (error?.response?.status !== 404 || pageToken || build.versionCode !== 1) throw error;
+      const registrationUrl = `https://firebase.googleapis.com/v1beta1/projects/${projectNumber}/androidApps/${encodeURIComponent(appId)}`;
+      const {data: app} = await client.request({url: registrationUrl});
+      if (app.appId !== appId || app.packageName !== build.applicationId ||
+          app.projectId !== process.env.FIREBASE_PROJECT_ID || app.state !== 'ACTIVE') {
+        throw new ReleasePolicyError('Firebase app registration does not match the signed APK.');
+      }
+      console.log('Registered Android app verified. Preparing its first App Distribution release (versionCode 1).');
+      return;
+    }
     for (const release of data.releases || []) {
       const code = Number(release.buildVersion);
       if (Number.isFinite(code) && code >= build.versionCode) {
