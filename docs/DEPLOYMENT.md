@@ -9,6 +9,7 @@ The distributed APK is R8-optimized and signed with one persistent debug key. Go
 - OIDC checks numerical owner/repository IDs, main ref, exact workflow path, and push/manual event.
 - The service account gets project-level App Distribution access, not general project administration.
 - The workflow never runs untrusted fork code in a privileged context.
+- Automatic delivery runs for Android source/build/branding changes. Documentation and deployment-configuration-only changes do not resend an APK; use manual dispatch with a new version when testing a delivery change.
 
 ## Google setup
 
@@ -54,6 +55,18 @@ The workflow checks R8 mapping, APK signature, and testOnly/debuggable flags, an
 Before the first upload, Firebase may return 404 for the release collection. Only versionCode 1 can bootstrap, and only after the Firebase Management API confirms an active Android registration with the exact App ID, project and APK package name. Other 404/403 errors remain failures.
 
 Artifacts contain the APK, R8 mapping and build metadata, never signing or Google credentials. A successful artifact upload followed by a Firebase error is a failed deployment.
+
+Firebase CLI's temporary binary-download URL is filtered out of public logs. Stable tester and Firebase console links remain visible; the shell retains `pipefail` so output filtering cannot hide a distribution failure.
+
+## Current verified release
+
+`0.1.0-debug` (versionCode 1) was built, signed and distributed on 2026-10-20 by [workflow run 39441446918](https://github.com/kissedcode/charging-optimization-tile/actions/runs/39441446918). The downloaded CI APK was verified against the persistent debug certificate.
+
+- APK SHA-256: `bb893511c654a89f1b8089108da709fc41dbdbaef18dbc03118b86111804ae52`
+- Signing certificate SHA-256: `b810bf5c10ec46410e1410d7fbb08f7158bcd6541742585be496166858f8a777`
+- [Tester release](https://appdistribution.firebase.google.com/testerapps/1:460876191249:android:4a2bcc211ec8a3976843b0/releases/62jh31fi3or8o?utm_source=firebase-tools)
+
+These are build/delivery checks, not an assertion that Pixel device acceptance has been completed.
 
 ## Device acceptance
 

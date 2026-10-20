@@ -2,9 +2,17 @@ name: Build and distribute
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
+    paths:
+      - 'app/**'
+      - 'branding/**'
+      - 'gradle/**'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'scripts/package-apk.sh'
+      - 'scripts/verify-branding.sh'
   workflow_dispatch:
 permissions:
   contents: read
@@ -117,7 +125,7 @@ jobs:
             --app "$FIREBASE_APP_ID" --project "$FIREBASE_PROJECT_ID" \
             --testers "$FIREBASE_TESTERS" \
             --release-notes "80% / Off Quick Settings tile. Build $GITHUB_RUN_NUMBER, commit $GITHUB_SHA. Debug-signed and R8-optimized." \
-            --non-interactive
+            --non-interactive 2>&1 | sed -E '/Download the release binary|[?&]token=/d'
       - name: Remove signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/charging-debug.keystore" firebase-debug.log

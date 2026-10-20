@@ -1,8 +1,8 @@
 # Charging Optimization Tile: спецификация
 
 Версия документа: 2026-10-20.
-Статус: утверждена пользователем 2026-10-19; идёт реализация и проверка.
-Текущая инсталляция: отсутствует; предполагаются `com.kissedcode.chargingtile`, Firebase project `charging-widget-kissed`, minSdk 35, targetSdk/compileSdk 36, Pixel 9 Pro.
+Статус: реализована; первая сборка распространена 2026-10-20, проверка на телефоне ожидается.
+Текущая инсталляция: APK `0.1.0-debug` (1), `com.kissedcode.chargingtile`, Firebase project `charging-widget-kissed`, minSdk 35, targetSdk/compileSdk 36, целевой телефон Pixel 9 Pro.
 Назначение: показывать текущий режим оптимизации зарядки в панели быстрых настроек и переключать ограничение 80% одним нажатием.
 
 ## Оглавление
@@ -282,7 +282,7 @@ APK не должен иметь `testOnly=true`. Имя: `charging-optimization
 ### Детали: GitHub Actions
 
 - **Pull request:** lint, unit tests, сборка оптимизированного проверочного APK с временной debug-подписью, без Firebase и без постоянных секретов. Этот APK не распространяется.
-- **Push в main:** те же проверки, затем доверенная сборка с постоянной debug-подписью и доставка.
+- **Push в main:** те же проверки; при изменениях app/build/branding выполняется доверенная сборка с постоянной debug-подписью и доставка. Правки документации и только конфигурации доставки не вызывают повторную рассылку; для них есть ручной запуск с новой версией.
 - **Ручной запуск:** workflow_dispatch только для main; другие refs не допускаются к доставке.
 - **Права:** contents:read по умолчанию; id-token:write только в job доставки.
 - **Изоляция:** отдельное environment `firebase-distribution`, разрешена только main. Не использовать pull_request_target и не выполнять код из fork с секретами.
@@ -348,7 +348,7 @@ FIREBASE_TESTERS
 - [x] Новый репозиторий публичный; старый приватный репозиторий не изменён.
 - [x] Lint и 14 unit tests проходят; покрыты отсутствующие/нечисловые значения, все режимы, выбор следующего состояния, отказ/частичная запись.
 - [x] Сборка internal действительно выполняет R8 и resource shrinking; mapping существует.
-- [ ] APK подписан постоянным debug-ключом; testOnly=false; applicationId неизменен.
+- [x] APK подписан постоянным debug-ключом; testOnly=false; applicationId неизменен.
 - [ ] Две последовательные версии устанавливаются как обновление.
 - [ ] На Pixel 9 Pro проверены первый запуск, разрешение, добавление плитки.
 - [ ] Проверено 80% → Off и Off → 80% по настройкам системы.
@@ -358,20 +358,24 @@ FIREBASE_TESTERS
 - [ ] Отмена разблокировки не меняет режим.
 - [ ] После перезагрузки/остановки процесса плитка перечитывает системное состояние.
 - [ ] Неверный repository/ref/event не получает OIDC-доступ.
-- [ ] Firebase принимает APK через OIDC без JSON-ключа; согласованные тестеры получают релиз.
-- [ ] В публичных файлах, artifacts и логах нет keystore, credentials и адресов тестеров.
+- [x] Firebase принимает APK через OIDC без JSON-ключа; API подтвердил раздачу согласованным тестерам (открытие письма/установка не проверялись).
+- [x] В публичных исходниках и artifacts нет keystore, Google credentials и адресов тестеров; в CI адреса маскируются. Временные ссылки скачивания Firebase фильтруются в последующих запусках.
 
 ### Детали: Known current deployment state
 
 - Репозиторий: `kissedcode/charging-optimization-tile`, public, ID `1426125944`.
 - Код: реализация объединена в main через PR #1; lint, 14 тестов и оптимизированная сборка прошли локально и в GitHub Actions.
-- Версия: первый планируемый релиз `0.1.0-debug`, versionCode 1.
-- Firebase project: `charging-widget-kissed`, кандидат из существующей конфигурации.
+- Версия: распространена `0.1.0-debug`, versionCode 1.
+- Firebase project: `charging-widget-kissed`, использована новая Android-регистрация без изменения старого виджета.
 - Firebase App ID нового приложения: `1:460876191249:android:4a2bcc211ec8a3976843b0`.
-- OIDC / IAM: настроены; выделены pool `charging-tile-gh`, provider `github-main`, service account `charging-tile-distributor`. GitHub получил доступ к API Firebase без постоянного JSON-ключа; первая попытка остановлена обработкой отсутствующего списка релизов нового приложения.
+- OIDC / IAM: настроены и проверены реальной доставкой; выделены pool `charging-tile-gh`, provider `github-main`, service account `charging-tile-distributor`. Постоянных Google service-account keys не создавали.
 - Keystore: создан один постоянный debug-keystore; загружен в secret environment `firebase-distribution`.
 - Тестеры: два стандартных адреса владельца; будут заданы непублично.
-- APK / mapping: локально собраны для `0.1.0-debug`; доставка ожидает настройки OIDC.
+- APK / mapping: [успешная GitHub-сборка 39441446918](https://github.com/kissedcode/charging-optimization-tile/actions/runs/39441446918); SHA-256 APK `bb893511c654a89f1b8089108da709fc41dbdbaef18dbc03118b86111804ae52`.
+- Firebase release: `62jh31fi3or8o`; [установка для тестеров](https://appdistribution.firebase.google.com/testerapps/1:460876191249:android:4a2bcc211ec8a3976843b0/releases/62jh31fi3or8o?utm_source=firebase-tools).
+- Дата первой успешной доставки: 2026-10-20, commit `fd291862cfda947145072183dd0b5177a5320d5f`.
 - Версия Android / прямой переход в Charging optimization: предстоит проверка на устройстве.
 
-После первой успешной доставки обновить этот раздел версией, результатами проверки и URL workflow. Никаких утверждений об установленном или проверенном приложении до реального испытания.
+Резервная копия debug-keystore сохранена на Mac вне репозитория с правами 0600. Точное приватное местоположение передано владельцу отдельно, в публичной спецификации не хранится.
+
+Никаких утверждений об установленном или проверенном на Pixel приложении до реального испытания.

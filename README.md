@@ -38,4 +38,6 @@ Set `ANDROID_DEBUG_KEYSTORE_PATH` to a private persistent debug keystore for upd
 
 Pull requests run checks without cloud credentials. Main runs the delivery workflow with the persistent debug key and Google OIDC, then uploads to Firebase App Distribution.
 
+Delivery runs automatically for app/build/branding changes and can also be started manually. Documentation or CI-configuration-only changes do not resend a build; every new delivery requires a version bump.
+
 See [deployment setup](docs/DEPLOYMENT.md) and the Russian [specification](SPEC.md). Firebase is a delivery service only; no Firebase SDK is in the APK. SPEC records real cloud/device verification status separately from CI.
