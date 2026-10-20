@@ -2,7 +2,7 @@
 
 Версия документа: 2026-10-20 (ревизия 2).
 Статус: реализована и проверена на Pixel 9 Pro (Android 16, CP1A.260505.005): чтение режима, 80% ↔ Off, системный экран зарядки.
-Текущая инсталляция: APK `0.1.1-debug` (2), test-only, `com.kissedcode.chargingtile`, Firebase project `charging-widget-kissed`, minSdk 35, targetSdk/compileSdk 36, целевой телефон Pixel 9 Pro.
+Текущая инсталляция: APK `0.1.2-debug` (3), test-only, `com.kissedcode.chargingtile`, Firebase project `charging-widget-kissed`, minSdk 35, targetSdk/compileSdk 36, целевой телефон Pixel 9 Pro.
 Назначение: показывать текущий режим оптимизации зарядки в панели быстрых настроек и переключать ограничение 80% одним нажатием.
 
 ## Оглавление
@@ -207,6 +207,19 @@ adb shell pm revoke com.kissedcode.chargingtile android.permission.WRITE_SECURE_
 | SettingsNavigator | Класс | Прямой переход и безопасные fallback | Android intents |
 | ChargingModeMapper | Чистая логика | Интерпретация значений и следующий режим | Нет |
 
+### Детали: Иконки плитки
+
+Горизонтальная батарейка 24×24, монохромная (тонируется системой), текст — контуры глифов Roboto Black, вырезанные из заливки (`fillType="evenOdd"`); генератор — `scripts/gen-tile-icons.py`.
+
+| Режим | Иконка |
+|---|---|
+| Off | пустая батарейка с молнией |
+| Limit 80% | заливка на 80% ширины, внутри вырезан текст `80%` |
+| Adaptive | полная заливка, внутри вырезана буква `A` |
+| Unknown | пустая батарейка со знаком `?` |
+
+Название плитки: `Optimization` / `Оптимизация`; подзаголовок — текущий режим.
+
 ### Детали: Ресурсы и локализация
 
 Все пользовательские строки из части 1 хранятся в ресурсах. Базовый язык `values/`: английский; `values-ru/`: русский. На телефоне с английским языком плитка показывает `Charging`, `80% limit`, `Off`, `Adaptive`, `Unknown`.
@@ -367,7 +380,7 @@ FIREBASE_TESTERS
 
 - Репозиторий: `kissedcode/charging-optimization-tile`, public, ID `1426125944`.
 - Код: реализация объединена в main через PR #1; исправление чтения (test-only, диагностика ошибки чтения, GitHub Release для `adb install -t`) — PR #5.
-- Версия: `0.1.1-debug`, versionCode 2 (0.1.0 не работала на устройстве из-за ограничения чтения скрытых настроек).
+- Версия: `0.1.2-debug`, versionCode 3 (0.1.1 — исправление чтения; 0.1.2 — название плитки `Optimization` и новые иконки). 0.1.0 не работала на устройстве из-за ограничения чтения скрытых настроек.
 - Firebase project: `charging-widget-kissed`, использована новая Android-регистрация без изменения старого виджета.
 - Firebase App ID нового приложения: `1:460876191249:android:4a2bcc211ec8a3976843b0`.
 - OIDC / IAM: настроены и проверены реальной доставкой; выделены pool `charging-tile-gh`, provider `github-main`, service account `charging-tile-distributor`. Постоянных Google service-account keys не создавали.

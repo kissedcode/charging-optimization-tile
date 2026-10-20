@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Charging Optimization Tile</string>
-    <string name="tile_label">Charging</string>
+    <string name="tile_label">Optimization</string>
     <string name="mode_limit">80% limit</string>
     <string name="mode_off">Off</string>
     <string name="mode_adaptive">Adaptive</string>
