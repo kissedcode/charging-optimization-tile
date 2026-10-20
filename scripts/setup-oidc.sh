@@ -10,12 +10,16 @@ POOL="charging-tile-gh"
 PROVIDER="github-main"
 SA_ID="charging-tile-distributor"
 SERVICE_ACCOUNT="$SA_ID@$PROJECT_ID.iam.gserviceaccount.com"
-for tool in gcloud gh; do
+TOOLS=(gcloud)
+if [[ "${SKIP_GITHUB_CONFIG:-0}" != "1" ]]; then TOOLS+=(gh); fi
+for tool in "${TOOLS[@]}"; do
   command -v "$tool" >/dev/null || { echo "Install $tool first." >&2; exit 1; }
 done
-[[ "$(gh api "repos/$REPO" --jq .id)" == "$REPO_ID" ]] || {
-  echo "Repository identity does not match the reviewed configuration." >&2; exit 1;
-}
+if [[ "${SKIP_GITHUB_CONFIG:-0}" != "1" ]]; then
+  [[ "$(gh api "repos/$REPO" --jq .id)" == "$REPO_ID" ]] || {
+    echo "Repository identity does not match the reviewed configuration." >&2; exit 1;
+  }
+fi
 PROJECT_NUMBER="$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')"
 test -n "$PROJECT_NUMBER"
 echo "Configuring App Distribution OIDC for $REPO in $PROJECT_ID."
@@ -52,8 +56,13 @@ POOL_NAME="projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL
 gcloud iam service-accounts add-iam-policy-binding "$SERVICE_ACCOUNT" --project="$PROJECT_ID" \
   --member="principalSet://iam.googleapis.com/$POOL_NAME/attribute.repository_id/$REPO_ID" \
   --role="roles/iam.workloadIdentityUser" --quiet >/dev/null
-gh variable set FIREBASE_PROJECT_ID --repo "$REPO" --env firebase-distribution --body "$PROJECT_ID"
-gh variable set GCP_SERVICE_ACCOUNT --repo "$REPO" --env firebase-distribution --body "$SERVICE_ACCOUNT"
-gh variable set GCP_WORKLOAD_IDENTITY_PROVIDER --repo "$REPO" --env firebase-distribution \
-  --body="$POOL_NAME/providers/$PROVIDER"
+if [[ "${SKIP_GITHUB_CONFIG:-0}" != "1" ]]; then
+  gh variable set FIREBASE_PROJECT_ID --repo "$REPO" --env firebase-distribution --body "$PROJECT_ID"
+  gh variable set GCP_SERVICE_ACCOUNT --repo "$REPO" --env firebase-distribution --body "$SERVICE_ACCOUNT"
+  gh variable set GCP_WORKLOAD_IDENTITY_PROVIDER --repo "$REPO" --env firebase-distribution \
+    --body="$POOL_NAME/providers/$PROVIDER"
+else
+  printf 'FIREBASE_PROJECT_ID=%s\nGCP_SERVICE_ACCOUNT=%s\nGCP_WORKLOAD_IDENTITY_PROVIDER=%s\n' \
+    "$PROJECT_ID" "$SERVICE_ACCOUNT" "$POOL_NAME/providers/$PROVIDER"
+fi
 echo "OIDC configured. Set FIREBASE_APP_ID after registering com.kissedcode.chargingtile."
